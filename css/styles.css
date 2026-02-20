@@ -1,0 +1,394 @@
+/* =========================
+   ZAWQ E-Commerce Website
+   ========================= */
+
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap");
+
+/* =========================
+            ROOT + BASE
+   ========================= */
+:root {
+  --ink: #111;
+  --muted: #777;
+  --border: #e9e9e9;
+  --paper: #ffffff;
+  --footer: #f4f4f4;
+
+  --page-x: 120px;
+  --page-top: 40px;
+  --page-bottom: 80px;
+
+  --title-size: 42px;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Arial,
+    sans-serif;
+  background: #fff;
+  color: var(--ink);
+  margin: 0;
+}
+
+.z-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.z-main {
+  flex: 1;
+  padding: var(--page-top) var(--page-x) var(--page-bottom);
+  background: var(--paper);
+}
+
+.z-navbar,
+.z-footer {
+  background: var(--paper);
+}
+
+/* =========================
+   NAVBAR
+   ========================= */
+
+.z-navbar {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.z-brand {
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  font-size: 18px;
+}
+
+.z-navbar .nav-link {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.z-navbar .nav-link:hover {
+  opacity: 0.7;
+}
+
+.sale-dot {
+  width: 6px;
+  height: 6px;
+  background: #d24a43;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.z-icons a {
+  text-decoration: none;
+  color: var(--ink);
+  transition: 0.15s ease;
+}
+
+.z-icons a:hover {
+  opacity: 0.6;
+}
+
+.z-icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+}
+
+.z-icon-btn:hover {
+  background: #f4f4f4;
+}
+
+.z-bag {
+  width: auto;
+  padding: 0 10px;
+  gap: 8px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.z-bag-text {
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.z-navbar .dropdown-menu {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 14px;
+  padding: 10px;
+  min-width: 220px;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.1);
+}
+
+.z-navbar .dropdown-item {
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.z-navbar .dropdown-item:hover {
+  background: #f4f4f4;
+}
+
+.z-navbar .dropdown-divider {
+  margin: 8px 0;
+  opacity: 0.15;
+}
+
+/* =========================
+    BREADCRUMB + TITLES
+   ========================= */
+.z-breadcrumb {
+  margin-top: 6px;
+  margin-bottom: 18px;
+  letter-spacing: 0.02em;
+}
+
+.z-title {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 400;
+  font-size: var(--title-size);
+  margin: 0 0 26px;
+}
+
+/* =========================
+            FOOTER
+   ========================= */
+.z-footer {
+  background: var(--footer);
+  padding: 60px 0;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: #666;
+}
+
+.z-footer-brand {
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.z-copyright {
+  font-size: 11px;
+  color: #999;
+}
+
+.z-footer-links a {
+  text-decoration: none;
+  color: #666;
+  margin-right: 18px;
+  letter-spacing: 0.1em;
+  font-size: 11px;
+}
+
+.z-footer-links a:last-child {
+  margin-right: 0;
+}
+
+.z-footer-links a:hover {
+  opacity: 0.6;
+}
+
+/* =========================
+            SHOP PAGE 
+   ========================= */
+.z-cards {
+  max-width: 1100px;
+}
+
+.z-cat-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 26px 24px;
+  text-decoration: none;
+  color: var(--ink);
+  background: #fff;
+  min-height: 140px;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.z-cat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+}
+
+.z-cat-name {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 22px;
+  margin-bottom: 6px;
+}
+
+.z-cat-desc {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 18px;
+}
+
+.z-cat-link {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: #444;
+}
+
+.z-cards .col-lg-4 {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* =========================
+   PRODUCTS PAGE (shop-products)
+   ========================= */
+.z-count {
+  font-size: 12px;
+  color: #888;
+}
+
+.z-chips {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.z-chip {
+  border: 1px solid #e6e6e6;
+  background: #fff;
+  color: #666;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  padding: 8px 14px;
+  border-radius: 7px;
+  text-transform: uppercase;
+}
+
+.z-chip.is-active {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+
+.z-prod-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.z-prod-card {
+  border: 1px solid #ededed;
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+  padding: 16px;
+  height: 100%;
+  transition: 0.15s ease;
+}
+
+.z-prod-link:hover .z-prod-card {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+}
+
+.z-prod-img {
+  width: 100%;
+  height: 210px;
+  object-fit: contain;
+  background: #f7f7f7;
+  border-radius: 10px;
+  padding: 18px;
+}
+
+.z-prod-meta {
+  margin-top: 14px;
+}
+
+.z-prod-series {
+  font-size: 9px;
+  color: #9a9a9a;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.z-prod-name-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.z-prod-name {
+  font-size: 12px;
+  color: #222;
+}
+
+.z-prod-price {
+  font-size: 12px;
+  color: #222;
+  font-weight: 600;
+}
+
+/* =========================
+   SEARCH PAGE
+   ========================= */
+.z-search-box {
+  max-width: 600px;
+}
+
+.z-search-box input {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.z-search-box input:focus {
+  border-color: #111;
+}
+
+/* =========================
+   RESPONSIVENESS
+   ========================= */
+@media (max-width: 991px) {
+  :root {
+    --page-x: 24px;
+    --title-size: 34px;
+  }
+
+  .z-footer {
+    padding: 40px 0;
+  }
+}
+@media (max-width: 991px) {
+  .z-navbar .navbar-collapse {
+    padding-top: 12px;
+  }
+
+  .z-navbar .navbar-nav {
+    gap: 8px !important;
+    align-items: flex-start !important;
+  }
+
+  .z-navbar .nav-link {
+    padding: 10px 0;
+  }
+}
