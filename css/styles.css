@@ -1,5 +1,5 @@
 /* =========================
-   ZAWQ E-Commerce Website
+  ZAWQ E-Commerce Website
    ========================= */
 
 @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap");
@@ -378,6 +378,7 @@ body {
     padding: 40px 0;
   }
 }
+
 @media (max-width: 991px) {
   .z-navbar .navbar-collapse {
     padding-top: 12px;
