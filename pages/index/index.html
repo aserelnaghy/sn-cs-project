@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ZAWQ — New Arrivals</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <link rel="stylesheet" href="./index.css" />
+</head>
+
+<body class="z-page-home">
+  <div class="z-wrapper">
+    <!------------------------------------ NAVBAR ------------------------------------------------>
+    <nav class="z-navbar navbar navbar-expand-lg">
+      <div class="container-fluid px-4 px-lg-5">
+        <a class="navbar-brand z-brand me-3" href="../index/index.html">ZAWQ</a>
+
+        <div class="collapse navbar-collapse justify-content-center" id="zNav">
+          <ul class="navbar-nav align-items-lg-center gap-lg-4">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                Shop
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a class="dropdown-item" href="../shop/shop.html">Shop</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="../new-arrivals/new-arrivals.html">New Arrivals</a>
+                </li>
+                <li>
+                  <hr class="dropdown-divider" />
+                </li>
+                <li>
+                  <a class="dropdown-item" href="../shop-products/shop-products.html?cat=men">
+                    Men's
+                  </a>
+                </li>
+
+                <li>
+                  <a class="dropdown-item" href="../shop-products/shop-products.html?cat=women">
+                    Women's
+                  </a>
+                </li>
+
+                <li>
+                  <a class="dropdown-item" href="../shop-products/shop-products.html?cat=kids">
+                    Kids
+                  </a>
+                </li>
+
+                <li>
+                  <a class="dropdown-item" href="../shop-products/shop-products.html?cat=unisex">
+                    Unisex
+                  </a>
+                </li>
+              </ul>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="../new-arrivals/new-arrivals.html">New In</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="#">Best Sellers</a>
+            </li>
+
+            <li class="nav-item d-flex align-items-center">
+              <a class="nav-link" href="#">Sale</a>
+              <span class="sale-dot ms-1"></span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="d-flex align-items-center gap-3 ms-auto">
+          <div class="d-flex align-items-center gap-3 z-icons">
+            <a href="../search/search.html" class="z-icon-btn" aria-label="Search">
+              <i class="bi bi-search"></i>
+            </a>
+
+            <a href="#" class="z-icon-btn z-bag" aria-label="Bag">
+              <i class="bi bi-bag"></i>
+              <span class="z-bag-text d-none d-md-inline">Bag (0)</span>
+            </a>
+
+            <a href="../Login/login.html" class="z-icon-btn" aria-label="Account">
+              <i class="bi bi-person-circle"></i>
+            </a>
+          </div>
+
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#zNav"
+            aria-controls="zNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!------------------------------------ MAIN ------------------------------------------------>
+    <main>
+      <!----------------- HERO SECTION -------------------------------->
+      <section class="z-hero z-hero--full">
+        <section class="z-hero">
+          <!-- background image -->
+          <img class="z-hero-bg" src="../../assets/landing.jpeg" alt="ZAWQ hero" />
+
+          <!-- overlay content -->
+          <div class="z-hero-overlay">
+            <div class="z-hero-content">
+              <div class="z-hero-season">WINTER — SPRING 2026</div>
+
+              <h1 class="z-hero-title">ZAWQ</h1>
+              <div class="z-hero-subtitle">NEW COLLECTION</div>
+
+              <p class="z-hero-desc">
+                Premium casual wear crafted for those who live<br />
+                intentionally
+              </p>
+
+              <a class="z-hero-cta" href="../shop/shop.html">EXPLORE COLLECTION</a>
+
+              <!-- <div class="z-hero-scroll">
+                  <span>SCROLL</span>
+                  <i class="z-hero-line"></i>
+                </div> -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Scrolling strip -->
+        <div class="z-hero-strip" aria-label="Category ticker">
+          <div class="z-strip-track" id="zStripTrack">
+            <div class="z-strip-group" id="zStripGroup">
+              <div class="z-strip-item">CONSCIOUSLY MADE</div>
+              <div class="z-strip-item">WS 2026</div>
+              <div class="z-strip-item">ZAWQ</div>
+              <div class="z-strip-item">PREMIUM CASUAL</div>
+              <div class="z-strip-item">NATURAL FIBERS</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!----------------- COLLECTION SECTION -------------------------------->
+      <section class="z-collection" aria-labelledby="z-collection-title">
+        <div class="z-collection-inner">
+          <header class="z-collection-head">
+            <div class="z-collection-kicker">WS26 — NEW ARRIVALS</div>
+            <h2 class="z-collection-title" id="z-collection-title">
+              The Collection
+            </h2>
+          </header>
+
+          <!-- Dynamic cards get injected here by renderHomeCollection(products) -->
+          <div class="z-collection-grid" id="zCollectionGrid"></div>
+        </div>
+      </section>
+      <!----------------- OUR STORY SECTION -------------------------------->
+      <section class="z-philo">
+        <div class="z-philo-media">
+          <img src="../../assets/login.jpeg" alt="Fabric texture" />
+        </div>
+
+        <div class="z-philo-panel">
+          <div class="z-philo-inner">
+            <div class="z-philo-kicker">Our Philosophy</div>
+
+            <h3 class="z-philo-title">
+              Made to be<br />
+              <em>lived in.</em>
+            </h3>
+
+            <p class="z-philo-text">
+              ZAWQ was born from a single belief: that exceptional clothing
+              should feel effortless. We source only the finest natural
+              materials — cashmere from Inner Mongolia, Egyptian cotton,
+              Portuguese linen — and craft each piece to move with you, not
+              against you.
+            </p>
+
+            <p class="z-philo-text z-philo-text--muted">
+              No excess. No noise. Just form, refined.
+            </p>
+
+            <a class="z-philo-btn" href="#">OUR STORY</a>
+
+            <div class="z-philo-stats">
+              <div class="z-stat">
+                <div class="z-stat-num">2026</div>
+                <div class="z-stat-label">FOUNDED</div>
+              </div>
+
+              <div class="z-stat">
+                <div class="z-stat-num">12</div>
+                <div class="z-stat-label">MATERIALS</div>
+              </div>
+
+              <div class="z-stat">
+                <div class="z-stat-num">100%</div>
+                <div class="z-stat-label">NATURAL FIBERS</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!----------------- NEWSLETTER SECTION -------------------------------->
+      <section class="z-newsletter" aria-label="Newsletter">
+        <div class="z-newsletter-inner">
+          <div class="z-news-kicker">STAY IN THE LOOP</div>
+
+          <h3 class="z-news-title">
+            New arrivals, early access,<br />
+            <em>nothing more.</em>
+          </h3>
+
+          <form class="z-news-form" action="#" method="post">
+            <input class="z-news-input" type="email" name="email" placeholder="Your email address" required />
+            <button class="z-news-btn" type="submit">SUBSCRIBE</button>
+          </form>
+        </div>
+      </section>
+    </main>
+    <!------------------------------------ FOOTER ------------------------------------------------>
+    <footer class="z-footer mt-auto">
+      <div class="container-fluid px-4 px-lg-5">
+        <div class="row align-items-center">
+          <div class="col-12 col-lg-4 mb-3 mb-lg-0">
+            <div class="z-footer-brand">ZAWQ</div>
+            <div class="z-copyright">© 2026 ZAWQ. All rights reserved.</div>
+          </div>
+
+          <div class="col-12 col-lg-4 text-lg-center mb-3 mb-lg-0 z-footer-links">
+            <a href="../shop/shop.html">SHOP</a>
+            <a href="#">STORES</a>
+            <a href="#">ABOUT</a>
+            <a href="#">CONTACT</a>
+            <a href="#">PRIVACY</a>
+          </div>
+
+          <div class="col-12 col-lg-4 text-lg-end z-footer-links">
+            <a href="#">INSTAGRAM</a>
+            <a href="#">PINTEREST</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!------------------------------------ JS ------------------------------------------------>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../../scripts/products.js"></script>
+  <script src="../../scripts/app.js"></script>
+</body>
+
+</html>

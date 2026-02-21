@@ -1,4 +1,3 @@
-
 async function loadComponent(id, file) {
     try {
         const res = await fetch(file);
@@ -14,7 +13,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadComponent("footer", "/components/footer.html");
 
     updateBagCount();
-    renderNavAuth(); // ✅ add this
+    renderNavAuth(); 
 });
 
 function updateBagCount() {

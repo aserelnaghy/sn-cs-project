@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<<<<<<< HEAD:shop.html
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ZAWQ — Shop</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+  <div class="z-wrapper">
+    <!------------------------------------ NAVBAR ------------------------------------------------>
+    <div id="navbar"></div>
+    <!------------------------------------ MAIN ------------------------------------------------>
+    <main class="z-main">
+      <div class="container-fluid px-5 px-lg-6">
+        <!-- Breadcrumb -->
+        <nav class="z-breadcrumb small text-muted" aria-label="breadcrumb">
+          <a href="index.html" class="text-muted text-decoration-none">Home</a>
+          <span class="mx-2">›</span>
+          <span>Shop</span>
+        </nav>
+
+        <!-- Page Title -->
+        <h1 class="z-title">Shop</h1>
+
+        <!-- Category Cards -->
+        <section class="row g-4 z-cards mt-4">
+          <div class="col-12 col-md-6 col-lg-4">
+            <a class="z-cat-card d-block" href="shop-products.html?cat=men">
+              <div class="z-cat-name">Men’s</div>
+              <div class="z-cat-desc">
+                Refined essentials and tailored pieces.
+              </div>
+              <div class="z-cat-link">VIEW COLLECTION →</div>
+            </a>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <a class="z-cat-card d-block" href="shop-products.html?cat=women">
+              <div class="z-cat-name">Women’s</div>
+              <div class="z-cat-desc">
+                Effortless silhouettes and natural fibres.
+              </div>
+              <div class="z-cat-link">VIEW COLLECTION →</div>
+            </a>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <a class="z-cat-card d-block" href="shop-products.html?cat=kids">
+              <div class="z-cat-name">Kids</div>
+              <div class="z-cat-desc">
+                Comfort-focused pieces for everyday.
+              </div>
+              <div class="z-cat-link">VIEW COLLECTION →</div>
+            </a>
+=======
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ZAWQ — Shop</title>
+
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    />
+
+    <!-- Root CSS -->
+    <link rel="stylesheet" href="../../css/styles.css" />
+
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="./shop.css" />
+  </head>
+
+  <body>
+    <div class="z-wrapper">
+      <!------------------------------------ NAVBAR ------------------------------------------------>
+      <nav class="z-navbar navbar navbar-expand-lg">
+        <div class="container-fluid px-4 px-lg-5">
+          <!-- Logo-->
+          <a class="navbar-brand z-brand me-3" href="../index/index.html"
+            >ZAWQ</a
+          >
+
+          <!-- Center Menu -->
+          <div
+            class="collapse navbar-collapse justify-content-center"
+            id="zNav"
+          >
+            <ul class="navbar-nav align-items-lg-center gap-lg-4">
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                >
+                  Shop
+                </a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a class="dropdown-item" href="../shop/shop.html">Shop</a>
+                  </li>
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="../new-arrivals/new-arrivals.html"
+                      >New Arrivals</a
+                    >
+                  </li>
+                  <li><hr class="dropdown-divider" /></li>
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="../shop-products/shop-products.html?cat=men"
+                    >
+                      Men's
+                    </a>
+                  </li>
+
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="../shop-products/shop-products.html?cat=women"
+                    >
+                      Women's
+                    </a>
+                  </li>
+
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="../shop-products/shop-products.html?cat=kids"
+                    >
+                      Kids
+                    </a>
+                  </li>
+
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="../shop-products/shop-products.html?cat=unisex"
+                    >
+                      Unisex
+                    </a>
+                  </li>
+                </ul>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link" href="../new-arrivals/new-arrivals.html"
+                  >New In</a
+                >
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link" href="#">Best Sellers</a>
+              </li>
+
+              <li class="nav-item d-flex align-items-center">
+                <a class="nav-link" href="#">Sale</a>
+                <span class="sale-dot ms-1"></span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Right Side -->
+          <div class="d-flex align-items-center gap-3 ms-auto">
+            <div class="d-flex align-items-center gap-3 z-icons">
+              <a
+                href="../search/search.html"
+                class="z-icon-btn"
+                aria-label="Search"
+              >
+                <i class="bi bi-search"></i>
+              </a>
+
+              <a href="#" class="z-icon-btn z-bag" aria-label="Bag">
+                <i class="bi bi-bag"></i>
+                <span class="z-bag-text d-none d-md-inline">Bag (0)</span>
+              </a>
+
+              <a href="#" class="z-icon-btn" aria-label="Account">
+                <i class="bi bi-person-circle"></i>
+              </a>
+            </div>
+
+            <!-- Mobile View -->
+            <button
+              class="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#zNav"
+              aria-controls="zNav"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span class="navbar-toggler-icon"></span>
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <!------------------------------------ MAIN ------------------------------------------------>
+      <main class="z-main">
+        <div class="container-fluid px-5 px-lg-6">
+          <!-- Breadcrumb -->
+          <nav class="z-breadcrumb small text-muted" aria-label="breadcrumb">
+            <a
+              href="../index/index.html"
+              class="text-muted text-decoration-none"
+              >Home</a
+            >
+            <span class="mx-2">›</span>
+            <span>Shop</span>
+          </nav>
+
+          <!-- Page Title -->
+          <h1 class="z-title">Shop</h1>
+
+          <!-- Category Cards -->
+          <section class="row g-4 z-cards mt-4">
+            <div class="col-12 col-md-6 col-lg-4">
+              <a
+                class="z-cat-card d-block"
+                href="../shop-products/shop-products.html?cat=men"
+              >
+                <div class="z-cat-name">Men’s</div>
+                <div class="z-cat-desc">
+                  Refined essentials and tailored pieces.
+                </div>
+                <div class="z-cat-link">VIEW COLLECTION →</div>
+              </a>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4">
+              <a
+                class="z-cat-card d-block"
+                href="../shop-products/shop-products.html?cat=women"
+              >
+                <div class="z-cat-name">Women’s</div>
+                <div class="z-cat-desc">
+                  Effortless silhouettes and natural fibres.
+                </div>
+                <div class="z-cat-link">VIEW COLLECTION →</div>
+              </a>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4">
+              <a
+                class="z-cat-card d-block"
+                href="../shop-products/shop-products.html?cat=kids"
+              >
+                <div class="z-cat-name">Kids</div>
+                <div class="z-cat-desc">
+                  Comfort-focused pieces for everyday.
+                </div>
+                <div class="z-cat-link">VIEW COLLECTION →</div>
+              </a>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4">
+              <a
+                class="z-cat-card d-block"
+                href="../shop-products/shop-products.html?cat=unisex"
+              >
+                <div class="z-cat-name">Unisex</div>
+                <div class="z-cat-desc">Pieces for everyone.</div>
+                <div class="z-cat-link">VIEW COLLECTION →</div>
+              </a>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <!------------------------------------ FOOTER ------------------------------------------------>
+      <footer class="z-footer mt-auto">
+        <div class="container-fluid px-4 px-lg-5">
+          <div class="row align-items-center">
+            <!-- TM -->
+            <div class="col-12 col-lg-4 mb-3 mb-lg-0">
+              <div class="z-footer-brand">ZAWQ</div>
+              <div class="z-copyright">© 2026 ZAWQ. All rights reserved.</div>
+            </div>
+
+            <!-- Pages -->
+            <div
+              class="col-12 col-lg-4 text-lg-center mb-3 mb-lg-0 z-footer-links"
+            >
+              <a href="../shop/shop.html">SHOP</a>
+              <a href="#">STORES</a>
+              <a href="#">ABOUT</a>
+              <a href="#">CONTACT</a>
+              <a href="#">PRIVACY</a>
+            </div>
+
+            <!-- Links -->
+            <div class="col-12 col-lg-4 text-lg-end z-footer-links">
+              <a href="#">INSTAGRAM</a>
+              <a href="#">PINTEREST</a>
+            </div>
+>>>>>>> main:pages/shop/shop.html
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!------------------------------------ FOOTER ------------------------------------------------>
+    <div id="footer"></div>
+
+    <!------------------------------------ JS ------------------------------------------------>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<<<<<<< HEAD:shop.html
+    <script src="scripts/app.js"></script>
+    <script src="scripts/components.js"></script>
+</body>
+
+</html>
+=======
+  </body>
+</html>
+>>>>>>> main:pages/shop/shop.html
