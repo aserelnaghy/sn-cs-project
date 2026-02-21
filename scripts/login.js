@@ -52,7 +52,7 @@ form.addEventListener("submit", async function (e) {
         // old key name
         // localStorage.setItem("currentUser", JSON.stringify(session.user));
 
-        window.location.href = "../index.html";
+        window.location.href = "/pages/index/index.html";
     } catch (err) {
         loginError.textContent = "Email or password is invalid.";
         loginError.classList.remove("d-none");

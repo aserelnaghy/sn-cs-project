@@ -13,16 +13,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadComponent("footer", "/components/footer.html");
 
     updateBagCount();
-    renderNavAuth(); 
+    renderNavAuth();
 });
 
-function updateBagCount() {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const count = cart.reduce((sum, item) => sum + (item.qty || 0), 0);
+function getSupabaseUser() {
+    const rawUser = localStorage.getItem("sb_user");
+    if (rawUser) {
+        try { return JSON.parse(rawUser); } catch { }
+    }
 
-    const el = document.getElementById("bagCount");
-    if (el) el.textContent = `(${count})`;
+    const rawSession = localStorage.getItem("sb_session");
+    if (rawSession) {
+        try {
+            const s = JSON.parse(rawSession);
+            return s?.user || null;
+        } catch { }
+    }
+
+    return null;
 }
+
 
 function getSupabaseUser() {
     // Preferred: sb_user
@@ -49,50 +59,35 @@ function getSupabaseUser() {
     return null;
 }
 
+
 function renderNavAuth() {
-    const container = document.getElementById("navAuthArea");
-    if (!container) return;
+    const slot = document.getElementById("navUserSlot");
+    if (!slot) return;
 
     const user = getSupabaseUser();
 
     if (!user) {
-        // NOT logged in
-        container.innerHTML = `
-      <a class="z-usericon" href="/pages/login.html" aria-label="Login">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M20 21a8 8 0 1 0-16 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          <path d="M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="1.5"/>
-        </svg>
-        <span class="ms-1">Login</span>
+        // NOT LOGGED IN: show icon + "Sign in"
+        slot.innerHTML = `
+      <a href="../Login/login.html" class="z-icon-btn d-flex align-items-center gap-2" aria-label="Sign in">
+        <i class="bi bi-person-circle"></i>
+        <span class="d-none d-md-inline">Sign in</span>
       </a>
     `;
         return;
     }
 
-    // LOGGED IN
-    const name =
-        user?.user_metadata?.name ||
-        user?.user_metadata?.fullName ||
-        user?.fullName ||
-        user?.email ||
-        "Account";
-
-    container.innerHTML = `
-    <a class="z-usericon" href="/pages/profile.html" aria-label="Profile">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M20 21a8 8 0 1 0-16 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        <path d="M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="1.5"/>
-      </svg>
-      <span class="ms-1">${escapeHtml(shortName(name))}</span>
-    </a>
-
-    <button class="btn z-nav-logout" type="button" id="logoutBtn">
-      Logout
+    // LOGGED IN: show "Sign out" text (no icon if you prefer)
+    slot.innerHTML = `
+    <button type="button"
+      class="btn btn-link p-0 text-decoration-none d-flex align-items-center gap-2 z-signout"
+      id="navSignOutBtn" aria-label="Sign out">
+      <span class="d-none d-md-inline">Sign out</span>
     </button>
   `;
 
-    const logoutBtn = document.getElementById("logoutBtn");
-    if (logoutBtn) logoutBtn.addEventListener("click", logout);
+    const btn = document.getElementById("navSignOutBtn");
+    if (btn) btn.addEventListener("click", logout);
 }
 
 function shortName(name) {
@@ -111,14 +106,25 @@ function escapeHtml(str) {
         .replaceAll("'", "&#039;");
 }
 
-async function logout() {
-    // Optional: call Supabase logout endpoint to revoke refresh token
-    // If you don't care, you can just clear storage.
-
+function logout() {
     localStorage.removeItem("sb_session");
     localStorage.removeItem("sb_user");
-    localStorage.removeItem("currentUser");
 
-    // Redirect to login (or home)
-    window.location.href = "/index.html";
+    window.location.href = "../Login/login.html";
+}
+
+function cartKey() {
+    const u = getSupabaseUser();
+    return u?.id ? `cart_${u.id}` : "cart_guest";
+}
+
+function getCart() {
+    return JSON.parse(localStorage.getItem(cartKey())) || [];
+}
+
+function updateBagCount() {
+    const cart = getCart();
+    const count = cart.reduce((sum, item) => sum + (Number(item.qty) || 0), 0);
+    const el = document.getElementById("bagCount");
+    if (el) el.textContent = String(count);
 }

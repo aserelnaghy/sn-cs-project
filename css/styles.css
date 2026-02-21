@@ -151,6 +151,16 @@ body {
   opacity: 0.15;
 }
 
+.z-signout {
+  color: #111;
+  font-weight: 600;
+  letter-spacing: .02em;
+}
+
+.z-signout:hover {
+  text-decoration: underline;
+}
+
 /* =========================
     BREADCRUMB + TITLES
    ========================= */

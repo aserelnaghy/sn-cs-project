@@ -179,7 +179,8 @@
                 localStorage.setItem("currentUser", JSON.stringify(result.user));
             }
 
-            window.location.href = "../index.html";
+            window.location.href = "/pages/index/index.html";
+
         } catch (err) {
             // Keep it clean: show global message
             showGlobalError(err.message || "Signup failed.");
