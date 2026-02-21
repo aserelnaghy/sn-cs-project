@@ -1,29 +1,60 @@
+const SUPABASE_URL = "https://ajuxbtifwipqmwmsrqcg.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_vzpgbW6T18bn5RyHdx66qw_pdeMQswL"; 
+
 const form = document.getElementById("loginForm");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const loginError = document.getElementById("loginError");
 
-form.addEventListener("submit", function (e) {
-    e.preventDefault();
+async function supabaseLogin(email, password) {
+    const res = await fetch(
+        `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+            },
+            body: JSON.stringify({ email, password }),
+        }
+    );
 
+    const data = await res.json();
+
+    if (!res.ok) {
+        throw new Error("Email or password is invalid.");
+    }
+
+    return data; // { access_token, token_type, expires_in, refresh_token, user }
+}
+
+form.addEventListener("submit", async function (e) {
+    e.preventDefault();
     loginError.classList.add("d-none");
 
     const email = emailInput.value.trim().toLowerCase();
     const password = passwordInput.value;
 
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-
-    const user = users.find(u =>
-        u.email.toLowerCase() === email &&
-        u.password === password
-    );
-
-    if (!user) {
+    if (!email || !password) {
+        loginError.textContent = "Email or password is invalid.";
         loginError.classList.remove("d-none");
         return;
     }
 
-    // Successful login
-    localStorage.setItem("currentUser", JSON.stringify(user));
-    window.location.href = "../index.html";
+    try {
+        const session = await supabaseLogin(email, password);
+
+        // Store session (so it can be used later for profile / guarded routes)
+        localStorage.setItem("sb_session", JSON.stringify(session));
+        localStorage.setItem("sb_user", JSON.stringify(session.user));
+
+        // old key name
+        // localStorage.setItem("currentUser", JSON.stringify(session.user));
+
+        window.location.href = "../index.html";
+    } catch (err) {
+        loginError.textContent = "Email or password is invalid.";
+        loginError.classList.remove("d-none");
+    }
 });
