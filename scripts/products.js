@@ -206,7 +206,7 @@ function productCardHTML(p) {
 
   return `
     <div class="col-12 col-md-6 col-lg-4">
-      <a href="#" class="z-prod-link">
+      <a href="../product/index.html?id=${p.id}" class="z-prod-link">
         <div class="z-prod-card">
           <img class="z-prod-img" src="${img}" alt="${name}">
           <div class="z-prod-meta">
@@ -267,7 +267,7 @@ function renderHomeCollection(products) {
       const price = Number.isFinite(p.price) ? money(p.price) : "—";
 
       return `
-        <a class="z-col-card" href="../shop-products/shop-products.html?cat=${p.cat}">
+        <a class="z-col-card" href="../product/index.html?id=${p.id}">
           <div class="z-col-img">
             <img src="${img}" alt="${name}" />
           </div>
@@ -551,9 +551,8 @@ function initSearchPage(allProducts) {
     const price = Number.isFinite(p.price) ? money(p.price) : "—";
     const name = p.name || "Untitled";
 
-    // Product page link
     return `
-      <a href="#" class="z-card">
+      <a href="../product/index.html?id=${p.id}" class="z-card">
         <div class="z-card-img">
           <img src="${img}" alt="${name}" loading="lazy" />
         </div>
