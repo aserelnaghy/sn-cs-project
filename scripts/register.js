@@ -1,6 +1,4 @@
-
 (function () {
-    // ===== Supabase config =====
     const SUPABASE_URL = "https://ajuxbtifwipqmwmsrqcg.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_vzpgbW6T18bn5RyHdx66qw_pdeMQswL";
 
@@ -15,7 +13,6 @@
     const passwordError = document.getElementById("passwordError");
     const confirmError = document.getElementById("confirmError");
 
-    // Global error (top of form)
     const registerError = document.getElementById("registerError");
 
     function showGlobalError(msg) {
@@ -109,7 +106,6 @@
         return true;
     }
 
-    // Live validation
     fullNameInput.addEventListener("input", validateName);
     emailInput.addEventListener("input", validateEmail);
     passwordInput.addEventListener("input", () => {
@@ -118,7 +114,6 @@
     });
     confirmInput.addEventListener("input", validateConfirm);
 
-    // ===== Supabase signup =====
     async function supabaseSignUp({ name, email, password }) {
         const res = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
             method: "POST",
@@ -130,14 +125,13 @@
             body: JSON.stringify({
                 email,
                 password,
-                data: { name }, // stored in user_metadata
+                data: { name },
             }),
         });
 
         const data = await res.json();
 
         if (!res.ok) {
-            // Supabase often returns error_description
             const msg =
                 data?.error_description ||
                 data?.error ||
@@ -146,7 +140,7 @@
             throw new Error(msg);
         }
 
-        return data; // { user, session } (if email confirm OFF)
+        return data;
     }
 
     form.addEventListener("submit", async function (e) {
@@ -168,21 +162,16 @@
         try {
             const result = await supabaseSignUp({ name, email, password });
 
-            // If you truly turned off email confirmation, session should exist.
-            // Still handle safely:
             if (result?.session) {
-                localStorage.setItem("sb_session", JSON.stringify(result.session));
+                localStorage.setItem("zawq-token", JSON.stringify(result.session));
             }
             if (result?.user) {
-                localStorage.setItem("sb_user", JSON.stringify(result.user));
-                // Compatibility with existing pages:
-                localStorage.setItem("currentUser", JSON.stringify(result.user));
+                localStorage.setItem("zawq-user", JSON.stringify(result.user));
             }
 
             window.location.href = "/pages/index/index.html";
 
         } catch (err) {
-            // Keep it clean: show global message
             showGlobalError(err.message || "Signup failed.");
         }
     });

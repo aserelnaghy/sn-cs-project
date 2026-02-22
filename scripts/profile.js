@@ -1,5 +1,4 @@
 (function () {
-    // Elements
     const welcomeMeta = document.getElementById("welcomeMeta");
     const notLoggedIn = document.getElementById("notLoggedIn");
     const profileForm = document.getElementById("profileForm");
@@ -22,17 +21,14 @@
     const ordersEmpty = document.getElementById("ordersEmpty");
     const ordersCount = document.getElementById("ordersCount");
 
-    // ---------- helpers ----------
     function getSupabaseUserSafe() {
-        // Prefer the one from components.js if loaded
         if (typeof getSupabaseUser === "function") return getSupabaseUser();
 
-        // Fallback
-        const rawUser = localStorage.getItem("sb_user");
+        const rawUser = localStorage.getItem("zawq-user");
         if (rawUser) {
             try { return JSON.parse(rawUser); } catch { }
         }
-        const rawSession = localStorage.getItem("sb_session");
+        const rawSession = localStorage.getItem("zawq-token");
         if (rawSession) {
             try {
                 const s = JSON.parse(rawSession);
@@ -66,7 +62,6 @@
         el._t = setTimeout(() => el.classList.add("d-none"), 1800);
     }
 
-    // ---------- validation ----------
     function isValidEmail(email) {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
         return re.test(String(email).trim());
@@ -101,7 +96,6 @@
         return true;
     }
 
-    // ---------- load profile ----------
     function loadProfile() {
         const user = getSupabaseUserSafe();
 
@@ -127,15 +121,13 @@
 
         fullNameInput.value = name;
         emailInput.value = email;
-        emailInput.readOnly = true; // Supabase email update needs extra API; keep it locked for now.
+        emailInput.readOnly = true;
 
-        // Preferences (localStorage per user)
         const prefs = getLS(prefsKey(user.id), { emails: false, offers: false });
         prefEmails.checked = !!prefs.emails;
         prefOffers.checked = !!prefs.offers;
     }
 
-    // ---------- save preferences ----------
     function savePreferences() {
         const user = getSupabaseUserSafe();
         if (!user) return;
@@ -149,7 +141,6 @@
         showToast(prefsToast);
     }
 
-    // ---------- save profile name (local + optional server) ----------
     async function saveProfileChanges() {
         const user = getSupabaseUserSafe();
         if (!user) return;
@@ -159,67 +150,52 @@
 
         const newName = fullNameInput.value.trim();
 
-        // Update locally so navbar/profile reflect immediately
-        // sb_user might exist OR session.user only
         try {
-            const sbUserRaw = localStorage.getItem("sb_user");
-            if (sbUserRaw) {
-                const sbUser = JSON.parse(sbUserRaw);
-                sbUser.user_metadata = sbUser.user_metadata || {};
-                sbUser.user_metadata.name = newName;
-                localStorage.setItem("sb_user", JSON.stringify(sbUser));
+            const userRaw = localStorage.getItem("zawq-user");
+            if (userRaw) {
+                const u = JSON.parse(userRaw);
+                u.user_metadata = u.user_metadata || {};
+                u.user_metadata.name = newName;
+                localStorage.setItem("zawq-user", JSON.stringify(u));
             }
 
-            const sessionRaw = localStorage.getItem("sb_session");
+            const sessionRaw = localStorage.getItem("zawq-token");
             if (sessionRaw) {
                 const s = JSON.parse(sessionRaw);
                 if (s?.user) {
                     s.user.user_metadata = s.user.user_metadata || {};
                     s.user.user_metadata.name = newName;
-                    localStorage.setItem("sb_session", JSON.stringify(s));
+                    localStorage.setItem("zawq-token", JSON.stringify(s));
                 }
             }
         } catch { }
 
-        // OPTIONAL: Update Supabase user metadata via Auth API (requires access token)
-        // If you don't want server update, you can delete this block.
         try {
             const token = (typeof getAccessToken === "function") ? getAccessToken() : null;
             if (token) {
-                const SUPABASE_AUTH_URL = "https://ajuxbtifwipqmwmsrqcg.supabase.co/auth/v1/user";
-                await fetch(SUPABASE_AUTH_URL, {
+                await fetch("https://ajuxbtifwipqmwmsrqcg.supabase.co/auth/v1/user", {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
-                        apikey: API_KEY,                 // from components.js global
+                        apikey: API_KEY,
                         Authorization: `Bearer ${token}`,
                     },
-                    body: JSON.stringify({
-                        data: { name: newName },
-                    }),
+                    body: JSON.stringify({ data: { name: newName } }),
                 });
             }
-        } catch {
-            // ignore (still updated locally)
-        }
+        } catch { }
 
-        // Re-render navbar auth slot if available
         if (typeof renderNavAuth === "function") renderNavAuth();
 
         showToast(saveToast);
     }
 
-    // ---------- orders (UI only unless you have a table) ----------
     function renderOrders() {
-        // If you later create orders table:
-        // - fetch orders by user.id
-        // - populate ordersList
         ordersCount.textContent = "0 orders";
         ordersEmpty.classList.remove("d-none");
         ordersList.innerHTML = "";
     }
 
-    // ---------- events ----------
     if (profileForm) {
         fullNameInput.addEventListener("input", validateName);
         emailInput.addEventListener("input", validateEmail);
@@ -231,20 +207,16 @@
     }
 
     if (logoutBtn) logoutBtn.addEventListener("click", () => {
-        // use your global logout if exists (components.js)
         if (typeof logout === "function") return logout();
 
-        // fallback
-        localStorage.removeItem("sb_session");
-        localStorage.removeItem("sb_user");
+        localStorage.removeItem("zawq-token");
+        localStorage.removeItem("zawq-user");
         window.location.href = "../index/index.html";
     });
 
     if (savePrefsBtn) savePrefsBtn.addEventListener("click", savePreferences);
 
-    // ---------- init (after components.js is loaded) ----------
     document.addEventListener("DOMContentLoaded", async () => {
-        // Bag count comes from DB cart_items (components.js)
         if (typeof updateBagCount === "function") await updateBagCount();
 
         loadProfile();

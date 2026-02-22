@@ -1,5 +1,5 @@
 const SUPABASE_URL = "https://ajuxbtifwipqmwmsrqcg.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_vzpgbW6T18bn5RyHdx66qw_pdeMQswL"; 
+const SUPABASE_ANON_KEY = "sb_publishable_vzpgbW6T18bn5RyHdx66qw_pdeMQswL";
 
 const form = document.getElementById("loginForm");
 const emailInput = document.getElementById("email");
@@ -26,7 +26,7 @@ async function supabaseLogin(email, password) {
         throw new Error("Email or password is invalid.");
     }
 
-    return data; // { access_token, token_type, expires_in, refresh_token, user }
+    return data;
 }
 
 form.addEventListener("submit", async function (e) {
@@ -45,12 +45,8 @@ form.addEventListener("submit", async function (e) {
     try {
         const session = await supabaseLogin(email, password);
 
-        // Store session (so it can be used later for profile / guarded routes)
-        localStorage.setItem("sb_session", JSON.stringify(session));
-        localStorage.setItem("sb_user", JSON.stringify(session.user));
-
-        // old key name
-        // localStorage.setItem("currentUser", JSON.stringify(session.user));
+        localStorage.setItem("zawq-token", JSON.stringify(session));
+        localStorage.setItem("zawq-user", JSON.stringify(session.user));
 
         window.location.href = "/pages/index/index.html";
     } catch (err) {

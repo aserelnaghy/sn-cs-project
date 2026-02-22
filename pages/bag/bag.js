@@ -4,7 +4,7 @@ const BASE_URL = `${SUPABASE_URL}/rest/v1`;
 
 function getAccessToken() {
     try {
-        const session = JSON.parse(localStorage.getItem("sb_session"));
+        const session = JSON.parse(localStorage.getItem("zawq-token"));
         return session?.access_token || null;
     } catch {
         return null;
@@ -38,14 +38,12 @@ async function fetchJson(url, options = {}) {
 async function loadBag() {
     const token = getAccessToken();
     if (!token) {
-        // DB cart has no guest. force login.
         window.location.href = "../Login/login.html";
         return;
     }
 
     const headers = authHeaders(token);
 
-    // 1) Fetch cart items (RLS ensures it's ONLY current user's items)
     const items = await fetchJson(
         `${BASE_URL}/cart_items?select=id,product_id,quantity,size&order=created_at.desc`,
         { headers }
@@ -62,14 +60,12 @@ async function loadBag() {
         subtotalEl.textContent = "0$";
         if (checkoutBtn) checkoutBtn.disabled = true;
 
-        // navbar count update if available
         if (typeof updateBagCount === "function") await updateBagCount();
         return;
     }
 
     if (checkoutBtn) checkoutBtn.disabled = false;
 
-    // 2) Fetch products in ONE request using IN
     const productIds = [...new Set(items.map((i) => i.product_id))];
     const inList = productIds.join(",");
     const productsArr = await fetchJson(
@@ -79,7 +75,6 @@ async function loadBag() {
 
     const products = Object.fromEntries(productsArr.map((p) => [p.id, p]));
 
-    // 3) Totals
     const totalItems = items.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
     const subtotal = items.reduce((sum, item) => {
         const p = products[item.product_id];
@@ -90,17 +85,14 @@ async function loadBag() {
     countEl.textContent = `${totalItems} ${totalItems === 1 ? "ITEM" : "ITEMS"}`;
     subtotalEl.textContent = `${subtotal}$`;
 
-    // navbar count update if available
     if (typeof updateBagCount === "function") await updateBagCount();
 
-    // 4) Render list
     list.innerHTML = "";
 
     for (const item of items) {
         const { product_id, quantity, size } = item;
         const product = products[product_id];
 
-        // If product missing, skip row (data mismatch)
         if (!product) continue;
 
         const el = document.createElement("div");
@@ -135,7 +127,6 @@ async function loadBag() {
       </div>
     `;
 
-        // RPC payload matches your current RPC signature
         const rpcHeaders = authJsonHeaders(token);
         const rpcBody = JSON.stringify({
             p_product_id: Number(product_id),
@@ -143,7 +134,6 @@ async function loadBag() {
             p_qty: 1,
         });
 
-        // Increase qty
         el.querySelector(".qty-increase").addEventListener("click", async () => {
             await fetchJson(`${BASE_URL}/rpc/add_to_cart`, {
                 method: "POST",
@@ -153,7 +143,6 @@ async function loadBag() {
             await loadBag();
         });
 
-        // Decrease qty (only if > 1 button exists)
         el.querySelector(".qty-decrease")?.addEventListener("click", async () => {
             await fetchJson(`${BASE_URL}/rpc/remove_from_cart`, {
                 method: "POST",
@@ -163,9 +152,7 @@ async function loadBag() {
             await loadBag();
         });
 
-        // Remove row entirely
         el.querySelector(".bag-item-remove").addEventListener("click", async () => {
-            // size may be null => must use is.null, not eq.null
             const sizeFilter = size ? `size=eq.${encodeURIComponent(size)}` : `size=is.null`;
 
             await fetchJson(

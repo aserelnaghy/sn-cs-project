@@ -10,7 +10,7 @@
 
     function getAccessToken() {
         try {
-            const s = JSON.parse(localStorage.getItem("sb_session"));
+            const s = JSON.parse(localStorage.getItem("zawq-token"));
             return s?.access_token || null;
         } catch {
             return null;
@@ -25,11 +25,9 @@
         };
     }
 
-    // ---------- subtotal ----------
     async function loadSubtotal() {
         const token = getAccessToken();
         if (!token) {
-            // no guest checkout in DB-cart setup
             window.location.href = "../Login/login.html";
             return;
         }
@@ -37,7 +35,6 @@
         subtotalEl.textContent = "—";
         subtotal = 0;
 
-        // 1) cart items
         const itemsRes = await fetch(
             `${BASE_URL}/cart_items?select=product_id,quantity`,
             { headers: authHeaders(token) }
@@ -45,8 +42,8 @@
 
         if (!itemsRes.ok) {
             if (itemsRes.status === 401) {
-                localStorage.removeItem("sb_session");
-                localStorage.removeItem("sb_user");
+                localStorage.removeItem("zawq-token");
+                localStorage.removeItem("zawq-user");
                 window.location.href = "../Login/login.html";
                 return;
             }
@@ -61,7 +58,6 @@
             return;
         }
 
-        // 2) fetch prices in one query (IN) instead of N fetches
         const ids = [...new Set(items.map(i => i.product_id))].filter(Boolean);
         const inFilter = `(${ids.join(",")})`;
 
@@ -88,7 +84,6 @@
         subtotalEl.textContent = `${subtotal}$`;
     }
 
-    // ---------- validation ----------
     const fields = ["first-name", "last-name", "address", "city", "zip", "country", "phone"];
 
     function validateForm() {
@@ -120,7 +115,6 @@
         });
     });
 
-    // ---------- create order ----------
     async function placeOrder() {
         if (!validateForm()) return;
 
@@ -135,7 +129,6 @@
         errorEl.textContent = "";
 
         try {
-            // Ensure subtotal loaded
             if (!subtotal || subtotal <= 0) {
                 await loadSubtotal();
             }
@@ -149,38 +142,25 @@
                 headers: authHeaders(token),
                 body: JSON.stringify({
                     p_total: subtotal,
-
-                    // OPTIONAL: if your RPC supports address fields, pass them
-                    // p_first_name: document.getElementById("first-name").value.trim(),
-                    // p_last_name: document.getElementById("last-name").value.trim(),
-                    // p_address: document.getElementById("address").value.trim(),
-                    // p_address2: document.getElementById("address2").value.trim(),
-                    // p_city: document.getElementById("city").value.trim(),
-                    // p_zip: document.getElementById("zip").value.trim(),
-                    // p_country: document.getElementById("country").value.trim(),
-                    // p_phone: document.getElementById("phone").value.trim(),
                 }),
             });
 
             if (!res.ok) {
                 if (res.status === 401) {
-                    localStorage.removeItem("sb_session");
-                    localStorage.removeItem("sb_user");
+                    localStorage.removeItem("zawq-token");
+                    localStorage.removeItem("zawq-user");
                     throw new Error("Session expired. Please login again.");
                 }
                 const err = await res.json().catch(() => ({}));
                 throw new Error(err?.message || `Error ${res.status}`);
             }
 
-            // Clear all cart items for the current user.
-            // The filter (id=not.is.null) is required — Supabase rejects bare DELETEs
-            // without a WHERE clause. RLS ensures only the user's own rows are deleted.
+            // Supabase requires a WHERE clause on DELETE; RLS scopes it to the current user
             await fetch(`${BASE_URL}/cart_items?id=not.is.null`, {
                 method: "DELETE",
                 headers: authHeaders(token),
             });
 
-            // Update navbar cart count
             if (typeof updateBagCount === "function") await updateBagCount();
 
             window.location.href = "../orders/index.html";
@@ -191,13 +171,10 @@
         }
     }
 
-    // events
     btn.addEventListener("click", placeOrder);
 
-    // init
     document.addEventListener("DOMContentLoaded", async () => {
         await loadSubtotal();
-        // also keep navbar cart count correct
         if (typeof updateBagCount === "function") await updateBagCount();
     });
 })();

@@ -2,7 +2,6 @@
     const API_KEY = "sb_publishable_vzpgbW6T18bn5RyHdx66qw_pdeMQswL";
     const SUPABASE_URL = "https://ajuxbtifwipqmwmsrqcg.supabase.co/rest/v1";
 
-
     async function loadComponent(id, file) {
         try {
             const res = await fetch(file);
@@ -22,12 +21,12 @@
     });
 
     function getSupabaseUser() {
-        const rawUser = localStorage.getItem("sb_user");
+        const rawUser = localStorage.getItem("zawq-user");
         if (rawUser) {
             try { return JSON.parse(rawUser); } catch { }
         }
 
-        const rawSession = localStorage.getItem("sb_session");
+        const rawSession = localStorage.getItem("zawq-token");
         if (rawSession) {
             try {
                 const s = JSON.parse(rawSession);
@@ -38,40 +37,12 @@
         return null;
     }
 
-
-    // function getSupabaseUser() {
-    //     // Preferred: sb_user
-    //     const sbUserRaw = localStorage.getItem("sb_user");
-    //     if (sbUserRaw) {
-    //         try { return JSON.parse(sbUserRaw); } catch { }
-    //     }
-
-    //     // Fallback: session.user
-    //     const sessionRaw = localStorage.getItem("sb_session");
-    //     if (sessionRaw) {
-    //         try {
-    //             const s = JSON.parse(sessionRaw);
-    //             return s?.user || null;
-    //         } catch { }
-    //     }
-
-    //     // Compatibility fallback if you kept it
-    //     const currentRaw = localStorage.getItem("currentUser");
-    //     if (currentRaw) {
-    //         try { return JSON.parse(currentRaw); } catch { }
-    //     }
-
-    //     return null;
-    // }
-
-
     function renderNavAuth() {
         const slot = document.getElementById("navUserSlot");
         if (!slot) return;
 
         const user = getSupabaseUser();
 
-        // NOT LOGGED IN
         if (!user) {
             slot.innerHTML = `
       <a href="../Login/login.html"
@@ -84,7 +55,6 @@
             return;
         }
 
-        // LOGGED IN (Dropdown)
         slot.innerHTML = `
     <div class="dropdown">
       <button class="nav-auth-btn dropdown-toggle"
@@ -121,13 +91,6 @@
         document.getElementById("navLogoutBtn")?.addEventListener("click", logout);
     }
 
-    function shortName(name) {
-        // keeps navbar tidy
-        const s = String(name).trim();
-        if (s.length <= 16) return s;
-        return s.slice(0, 16) + "…";
-    }
-
     function escapeHtml(str) {
         return String(str)
             .replaceAll("&", "&amp;")
@@ -138,8 +101,8 @@
     }
 
     function logout() {
-        localStorage.removeItem("sb_session");
-        localStorage.removeItem("sb_user");
+        localStorage.removeItem("zawq-token");
+        localStorage.removeItem("zawq-user");
 
         window.location.href = "/pages/index/index.html";
     }
@@ -155,7 +118,7 @@
 
     function getAccessToken() {
         try {
-            const session = JSON.parse(localStorage.getItem("sb_session"));
+            const session = JSON.parse(localStorage.getItem("zawq-token"));
             return session?.access_token || null;
         } catch {
             return null;

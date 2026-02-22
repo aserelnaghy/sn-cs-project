@@ -75,7 +75,7 @@
 
     function getAccessToken() {
         try {
-            const session = JSON.parse(localStorage.getItem("sb_session"));
+            const session = JSON.parse(localStorage.getItem("zawq-token"));
             return session?.access_token || null;
         } catch {
             return null;
@@ -94,7 +94,6 @@
 
         const token = getAccessToken();
         if (!token) {
-            // No guest cart in DB. Force login.
             window.location.href = "../Login/login.html";
             return;
         }
@@ -123,7 +122,6 @@
                 throw new Error(err?.message || "Failed to add to bag.");
             }
 
-            // Update navbar count
             if (typeof updateBagCount === "function") await updateBagCount();
 
             if (redirectToBag) window.location.href = "../bag/index.html";
