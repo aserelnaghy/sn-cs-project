@@ -213,6 +213,18 @@ main {
     gap: 0.75rem;
 }
 
+.login-prompt {
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: #6E6E6E;
+}
+
+.login-prompt a {
+    color: #1A1A1A;
+    font-weight: 600;
+    text-decoration: underline;
+}
+
 .btn-add-to-bag,
 .btn-add-view-bag {
     height: 52px;

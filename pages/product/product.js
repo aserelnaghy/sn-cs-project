@@ -94,9 +94,10 @@
 
         const token = getAccessToken();
         if (!token) {
-            window.location.href = "../Login/login.html";
+            document.getElementById("login-prompt").style.display = "block";
             return;
         }
+        document.getElementById("login-prompt").style.display = "none";
 
         const size = selectedSizeBtn ? selectedSizeBtn.textContent.trim() : null;
 
