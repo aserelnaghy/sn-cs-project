@@ -1,6 +1,6 @@
 (function () {
     const SB_API_KEY = "sb_publishable_vzpgbW6T18bn5RyHdx66qw_pdeMQswL";
-    const SB_REST_URL = "https://ajuxbtifwipqmwmsrqcg.supabase.co/rest/v1";
+    const BASE_URL = "https://ajuxbtifwipqmwmsrqcg.supabase.co/rest/v1";
 
     const subtotalEl = document.getElementById("order-subtotal");
     const btn = document.getElementById("place-order-btn");
@@ -39,7 +39,7 @@
 
         // 1) cart items
         const itemsRes = await fetch(
-            `${SB_REST_URL}/cart_items?select=product_id,quantity`,
+            `${BASE_URL}/cart_items?select=product_id,quantity`,
             { headers: authHeaders(token) }
         );
 
@@ -66,7 +66,7 @@
         const inFilter = `(${ids.join(",")})`;
 
         const productsRes = await fetch(
-            `${SB_REST_URL}/products?select=id,price&id=in.${encodeURIComponent(inFilter)}`,
+            `${BASE_URL}/products?select=id,price&id=in.${encodeURIComponent(inFilter)}`,
             { headers: authHeaders(token) }
         );
 
@@ -144,7 +144,7 @@
                 throw new Error("Your cart is empty.");
             }
 
-            const res = await fetch(`${SB_REST_URL}/rpc/create_order`, {
+            const res = await fetch(`${BASE_URL}/rpc/create_order`, {
                 method: "POST",
                 headers: authHeaders(token),
                 body: JSON.stringify({
@@ -172,17 +172,18 @@
                 throw new Error(err?.message || `Error ${res.status}`);
             }
 
-            // If your create_order RPC already clears cart_items, stop here.
-            // If not, clear cart_items explicitly:
-            await fetch(`${SB_REST_URL}/cart_items`, {
+            // Clear all cart items for the current user.
+            // The filter (id=not.is.null) is required — Supabase rejects bare DELETEs
+            // without a WHERE clause. RLS ensures only the user's own rows are deleted.
+            await fetch(`${BASE_URL}/cart_items?id=not.is.null`, {
                 method: "DELETE",
                 headers: authHeaders(token),
             });
 
-            // Update navbar count if components.js provides it
+            // Update navbar cart count
             if (typeof updateBagCount === "function") await updateBagCount();
 
-            window.location.href = "../bag/index.html";
+            window.location.href = "../orders/index.html";
         } catch (err) {
             errorEl.textContent = err?.message || "Something went wrong, please try again.";
             btn.disabled = false;

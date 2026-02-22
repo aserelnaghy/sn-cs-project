@@ -64,7 +64,12 @@ body {
 .z-navbar {
   padding: 18px 0;
   border-bottom: 1px solid var(--border);
+  position: relative;
 }
+
+  .z-navbar .container {
+    position: relative;
+  }
 
 .brand-logo {
   height: 24px;
@@ -78,9 +83,18 @@ body {
 }
 
 .z-navbar .nav-link {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
   color: var(--ink);
+}
+
+@media (min-width: 992px) {
+  .z-navbar .navbar-collapse {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+  }
 }
 
 .z-navbar .nav-link:hover {
@@ -253,7 +267,7 @@ body {
             FOOTER
    ========================= */
 .z-footer {
-  background: var(--footer);
+  background: var(--paper);
   padding: 60px 0;
   border-top: 1px solid var(--border);
   font-size: 12px;

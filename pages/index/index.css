@@ -16,8 +16,11 @@
 .z-hero-bg {
   position: relative;
   width: 100%;
-  height: auto;
+  height: 830px;
   display: block;
+  object-fit: cover;
+  object-position: top center;
+  filter: brightness(0.8);
 }
 
 .z-hero-overlay {
@@ -225,7 +228,7 @@
 
 .z-col-img {
   background: #ededed;
-  height: 230px;
+  height: 320px;
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -534,7 +537,7 @@
     gap: 26px;
   }
   .z-col-img {
-    height: 260px;
+    height: 340px;
   }
   .z-col-img img {
     max-width: 78%;

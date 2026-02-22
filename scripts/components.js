@@ -103,6 +103,11 @@
             <i class="bi bi-person me-2"></i> Profile
           </a>
         </li>
+        <li>
+          <a class="dropdown-item" href="../orders/index.html">
+            <i class="bi bi-bag-check me-2"></i> My Orders
+          </a>
+        </li>
         <li><hr class="dropdown-divider"></li>
         <li>
           <button class="dropdown-item z-auth-logout" type="button" id="navLogoutBtn">
