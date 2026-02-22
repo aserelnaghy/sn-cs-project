@@ -13,7 +13,7 @@
         rel="stylesheet">
 </head>
 
-<body>
+<body class="z-page-about">
 
     <header>
         <div id="navbar"></div>
@@ -44,8 +44,6 @@
                     No excess. No noise. Just form, refined.
                 </p>
 
-                <a class="z-philo-btn" href="#">OUR STORY</a>
-
                 <div class="z-philo-stats">
                     <div class="z-stat">
                         <div class="z-stat-num">2026</div>
@@ -69,6 +67,18 @@
     <div id="footer"></div>
 
     <script src="../../scripts/components.js"></script>
+    <script>
+        const LIGHT_LOGO = "../../assets/images/zawq-logo-light.png";
+        ["navbar", "footer"].forEach(id => {
+            new MutationObserver((_, obs) => {
+                const logo = document.getElementById(id)?.querySelector(".brand-logo");
+                if (logo) {
+                    logo.src = LIGHT_LOGO;
+                    obs.disconnect();
+                }
+            }).observe(document.getElementById(id), { childList: true, subtree: true });
+        });
+    </script>
 </body>
 
 </html>

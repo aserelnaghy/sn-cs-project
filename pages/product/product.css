@@ -96,7 +96,7 @@ main {
 
 .product-image-box {
     height: 600px;
-    width: 570px;
+    width: 100%;
     background-color: #F1F1F1;
     border-radius: 10px;
     display: flex;
@@ -106,13 +106,12 @@ main {
 
 #product-image {
     height: 500px;
-    
 }
 
 /* product details */
 
 .product-details {
-    padding-left: 7rem;
+    padding-left: 4rem;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;

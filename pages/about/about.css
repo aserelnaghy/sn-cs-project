@@ -1,4 +1,58 @@
 /* =========================================================
+   ABOUT PAGE — NAVBAR & FOOTER
+   ========================================================= */
+.z-page-about {
+    background: #111;
+}
+
+.z-page-about .z-navbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+.z-page-about .z-navbar a,
+.z-page-about .z-navbar .nav-link,
+.z-page-about .z-navbar .navbar-brand,
+.z-page-about .z-navbar .z-bag-text,
+.z-page-about .z-navbar .nav-auth-btn {
+    color: rgba(255, 255, 255, 0.82) !important;
+}
+
+.z-page-about .z-navbar .nav-link:hover,
+.z-page-about .z-navbar .z-icon-btn:hover,
+.z-page-about .z-navbar .nav-auth-btn:hover {
+    color: #fff !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.z-page-about .z-navbar .navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.2);
+    filter: invert(1);
+}
+
+.z-page-about .z-footer {
+    background: #111 !important;
+    border-top-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.z-page-about .z-footer .z-footer-brand,
+.z-page-about .z-footer .z-copyright,
+.z-page-about .z-footer .z-footer-links a {
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.z-page-about .z-footer .z-footer-links a:hover {
+    color: rgba(255, 255, 255, 0.75) !important;
+    opacity: 1 !important;
+}
+
+/* =========================================================
    PHILOSOPHY (Our Story)
    ========================================================= */
 .z-philo {

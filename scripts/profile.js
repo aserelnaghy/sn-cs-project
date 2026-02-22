@@ -17,10 +17,6 @@
     const savePrefsBtn = document.getElementById("savePrefsBtn");
     const prefsToast = document.getElementById("prefsToast");
 
-    const ordersList = document.getElementById("ordersList");
-    const ordersEmpty = document.getElementById("ordersEmpty");
-    const ordersCount = document.getElementById("ordersCount");
-
     function getSupabaseUserSafe() {
         if (typeof getSupabaseUser === "function") return getSupabaseUser();
 
@@ -190,12 +186,6 @@
         showToast(saveToast);
     }
 
-    function renderOrders() {
-        ordersCount.textContent = "0 orders";
-        ordersEmpty.classList.remove("d-none");
-        ordersList.innerHTML = "";
-    }
-
     if (profileForm) {
         fullNameInput.addEventListener("input", validateName);
         emailInput.addEventListener("input", validateEmail);
@@ -220,6 +210,5 @@
         if (typeof updateBagCount === "function") await updateBagCount();
 
         loadProfile();
-        renderOrders();
     });
 })();

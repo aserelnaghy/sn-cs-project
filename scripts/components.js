@@ -158,4 +158,9 @@
             el.textContent = "";
         }
     }
+
+    window.getSupabaseUser = getSupabaseUser;
+    window.getAccessToken = getAccessToken;
+    window.renderNavAuth = renderNavAuth;
+    window.updateBagCount = updateBagCount;
 })();
