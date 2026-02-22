@@ -1,74 +1,60 @@
-(function () {
-    const form = document.getElementById("loginForm");
-    const emailInput = document.getElementById("email");
-    const passwordInput = document.getElementById("password");
+const SUPABASE_URL = "https://ajuxbtifwipqmwmsrqcg.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_vzpgbW6T18bn5RyHdx66qw_pdeMQswL"; 
 
-    const emailError = document.getElementById("emailError");
-    const passwordError = document.getElementById("passwordError");
+const form = document.getElementById("loginForm");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const loginError = document.getElementById("loginError");
 
-    function isValidEmail(email) {
-        // email regex
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-        return re.test(String(email).trim());
-    }
-
-    function setInvalid(input, errorEl, message) {
-        input.classList.add("is-invalid");
-        if (message) errorEl.textContent = message;
-    }
-
-    function setValid(input) {
-        input.classList.remove("is-invalid");
-    }
-
-    function validateEmail() {
-        const value = emailInput.value.trim();
-        if (!value) {
-            setInvalid(emailInput, emailError, "Email is required.");
-            return false;
+async function supabaseLogin(email, password) {
+    const res = await fetch(
+        `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+            },
+            body: JSON.stringify({ email, password }),
         }
-        if (!isValidEmail(value)) {
-            setInvalid(emailInput, emailError, "Please enter a valid email address.");
-            return false;
-        }
-        setValid(emailInput);
-        return true;
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+        throw new Error("Email or password is invalid.");
     }
 
-    function validatePassword() {
-        const value = passwordInput.value;
-        if (!value) {
-            setInvalid(passwordInput, passwordError, "Password is required.");
-            return false;
-        }
-        if (value.length < 6) {
-            setInvalid(passwordInput, passwordError, "Password must be at least 6 characters.");
-            return false;
-        }
-        setValid(passwordInput);
-        return true;
+    return data; // { access_token, token_type, expires_in, refresh_token, user }
+}
+
+form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    loginError.classList.add("d-none");
+
+    const email = emailInput.value.trim().toLowerCase();
+    const password = passwordInput.value;
+
+    if (!email || !password) {
+        loginError.textContent = "Email or password is invalid.";
+        loginError.classList.remove("d-none");
+        return;
     }
 
-    // Live validation
-    // emailInput.addEventListener("input", validateEmail);
-    // passwordInput.addEventListener("input", validatePassword);
+    try {
+        const session = await supabaseLogin(email, password);
 
-    form.addEventListener("submit", function (e) {
-        e.preventDefault();
+        // Store session (so it can be used later for profile / guarded routes)
+        localStorage.setItem("sb_session", JSON.stringify(session));
+        localStorage.setItem("sb_user", JSON.stringify(session.user));
 
-        const okEmail = validateEmail();
-        const okPassword = validatePassword();
+        // old key name
+        // localStorage.setItem("currentUser", JSON.stringify(session.user));
 
-        if (!okEmail || !okPassword) return;
-
-        // Simulated login success (no backend)
-        const loginPayload = {
-            email: emailInput.value.trim(),
-            loggedInAt: new Date().toISOString()
-        };
-        localStorage.setItem("currentUser", JSON.stringify(loginPayload));
-
-
-        window.location.href = "../index.html";
-    });
-})();
+        window.location.href = "/pages/index/index.html";
+    } catch (err) {
+        loginError.textContent = "Email or password is invalid.";
+        loginError.classList.remove("d-none");
+    }
+});

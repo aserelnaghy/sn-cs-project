@@ -25,7 +25,7 @@
                         <!-- Breadcrumb -->
                         <nav class="login-breadcrumb" aria-label="breadcrumb">
                             <ol class="breadcrumb mb-4">
-                                <li class="breadcrumb-item"><a href="./index.html">Home</a></li>
+                                <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">Login</li>
                             </ol>
                         </nav>
@@ -38,6 +38,9 @@
 
                         <!-- Form -->
                         <form id="loginForm" novalidate>
+                            <div id="loginError" class="login-global-error d-none">
+                                Email or password is invalid.
+                            </div>
                             <!-- Email -->
                             <div class="mb-3">
                                 <label for="email" class="form-label login-label">EMAIL</label>
@@ -65,7 +68,7 @@
                                     SIGN IN
                                 </button>
 
-                                <a href="./index.html" class="btn login-btn-secondary px-4">
+                                <a href="../index/index.html" class="btn login-btn-secondary px-4">
                                     CANCEL
                                 </a>
                             </div>

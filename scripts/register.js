@@ -1,5 +1,9 @@
 
 (function () {
+    // ===== Supabase config =====
+    const SUPABASE_URL = "https://ajuxbtifwipqmwmsrqcg.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_vzpgbW6T18bn5RyHdx66qw_pdeMQswL";
+
     const form = document.getElementById("registerForm");
     const fullNameInput = document.getElementById("fullName");
     const emailInput = document.getElementById("email");
@@ -10,6 +14,21 @@
     const emailError = document.getElementById("emailError");
     const passwordError = document.getElementById("passwordError");
     const confirmError = document.getElementById("confirmError");
+
+    // Global error (top of form)
+    const registerError = document.getElementById("registerError");
+
+    function showGlobalError(msg) {
+        if (!registerError) return;
+        registerError.textContent = msg || "Signup failed.";
+        registerError.classList.remove("d-none");
+    }
+
+    function hideGlobalError() {
+        if (!registerError) return;
+        registerError.classList.add("d-none");
+        registerError.textContent = "";
+    }
 
     function isValidEmail(email) {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -95,25 +114,44 @@
     emailInput.addEventListener("input", validateEmail);
     passwordInput.addEventListener("input", () => {
         validatePassword();
-        // keep confirm in sync while typing password
         if (confirmInput.value) validateConfirm();
     });
     confirmInput.addEventListener("input", validateConfirm);
 
-    function getUsers() {
-        try {
-            return JSON.parse(localStorage.getItem("users")) || [];
-        } catch {
-            return [];
+    // ===== Supabase signup =====
+    async function supabaseSignUp({ name, email, password }) {
+        const res = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+            },
+            body: JSON.stringify({
+                email,
+                password,
+                data: { name }, // stored in user_metadata
+            }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            // Supabase often returns error_description
+            const msg =
+                data?.error_description ||
+                data?.error ||
+                data?.message ||
+                "Signup failed.";
+            throw new Error(msg);
         }
+
+        return data; // { user, session } (if email confirm OFF)
     }
 
-    function setUsers(users) {
-        localStorage.setItem("users", JSON.stringify(users));
-    }
-
-    form.addEventListener("submit", function (e) {
+    form.addEventListener("submit", async function (e) {
         e.preventDefault();
+        hideGlobalError();
 
         const ok =
             validateName() &&
@@ -123,32 +161,29 @@
 
         if (!ok) return;
 
-        const users = getUsers();
+        const name = fullNameInput.value.trim();
         const email = emailInput.value.trim().toLowerCase();
+        const password = passwordInput.value;
 
-        const exists = users.some(u => (u.email || "").toLowerCase() === email);
-        if (exists) {
-            setInvalid(emailInput, emailError, "This email is already registered. Please sign in.");
-            return;
+        try {
+            const result = await supabaseSignUp({ name, email, password });
+
+            // If you truly turned off email confirmation, session should exist.
+            // Still handle safely:
+            if (result?.session) {
+                localStorage.setItem("sb_session", JSON.stringify(result.session));
+            }
+            if (result?.user) {
+                localStorage.setItem("sb_user", JSON.stringify(result.user));
+                // Compatibility with existing pages:
+                localStorage.setItem("currentUser", JSON.stringify(result.user));
+            }
+
+            window.location.href = "/pages/index/index.html";
+
+        } catch (err) {
+            // Keep it clean: show global message
+            showGlobalError(err.message || "Signup failed.");
         }
-
-        const newUser = {
-            id: crypto && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
-            fullName: fullNameInput.value.trim(),
-            email: email,
-            password: passwordInput.value,
-            createdAt: new Date().toISOString()
-        };
-
-        users.push(newUser);
-        setUsers(users);
-
-        localStorage.setItem("currentUser", JSON.stringify({
-            id: newUser.id,
-            fullName: newUser.fullName,
-            email: newUser.email
-        }));
-
-        window.location.href = "../index.html";
     });
 })();

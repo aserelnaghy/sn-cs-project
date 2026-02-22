@@ -93,6 +93,16 @@
     border-color: #a24b4b;
 }
 
+.login-global-success {
+    background: #eef6ee;
+    border: 1px solid #b7dbb7;
+    color: #1f6b1f;
+    padding: 10px 14px;
+    margin-bottom: 18px;
+    border-radius: 4px;
+    font-size: .9rem;
+}
+
 /* Buttons */
 .login-btn-primary {
     background: #cfcac3;
@@ -150,7 +160,6 @@
 
 
     background-image: url("../../assets/login.jpeg");
-    
     background-size: cover;
     background-position: center;
     filter: saturate(0.95) contrast(1.02);
