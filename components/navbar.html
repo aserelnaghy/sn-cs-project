@@ -3,7 +3,9 @@
 <!------------------------------------ NAVBAR ------------------------------------------------>
 <nav class="z-navbar navbar navbar-expand-lg">
     <div class="container-fluid px-4 px-lg-5">
-        <a class="navbar-brand z-brand me-3" href="../index/index.html">ZAWQ</a>
+        <a class="navbar-brand z-brand me-3" href="../index/index.html">
+            <img src="../../assets/images/zawq-logo.png" alt="ZAWQ Logo" class="brand-logo">
+        </a>
 
         <div class="collapse navbar-collapse justify-content-center" id="zNav">
             <ul class="navbar-nav align-items-lg-center gap-lg-4">
@@ -68,11 +70,9 @@
                     <i class="bi bi-search"></i>
                 </a>
 
-                <a href="../bag/index.html" class="z-icon-btn z-bag" aria-label="Bag">
+                <a class="nav-icon-btn nav-bag-icon-btn" href="../bag/index.html" aria-label="Bag">
                     <i class="bi bi-bag"></i>
-                    <span class="z-bag-text d-none d-md-inline">
-                        Bag (<span id="bagCount">0</span>)
-                    </span>
+                    <span class="nav-bag-label d-none d-md-inline">Cart<span id="nav-bag-count"></span></span>
                 </a>
 
                 <div id="navUserSlot"></div>
@@ -85,3 +85,4 @@
         </div>
     </div>
 </nav>
+

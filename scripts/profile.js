@@ -1,7 +1,5 @@
-
 (function () {
-    const bagCountEl = document.getElementById("bagCount");
-
+    // Elements
     const welcomeMeta = document.getElementById("welcomeMeta");
     const notLoggedIn = document.getElementById("notLoggedIn");
     const profileForm = document.getElementById("profileForm");
@@ -24,6 +22,30 @@
     const ordersEmpty = document.getElementById("ordersEmpty");
     const ordersCount = document.getElementById("ordersCount");
 
+    // ---------- helpers ----------
+    function getSupabaseUserSafe() {
+        // Prefer the one from components.js if loaded
+        if (typeof getSupabaseUser === "function") return getSupabaseUser();
+
+        // Fallback
+        const rawUser = localStorage.getItem("sb_user");
+        if (rawUser) {
+            try { return JSON.parse(rawUser); } catch { }
+        }
+        const rawSession = localStorage.getItem("sb_session");
+        if (rawSession) {
+            try {
+                const s = JSON.parse(rawSession);
+                return s?.user || null;
+            } catch { }
+        }
+        return null;
+    }
+
+    function prefsKey(userId) {
+        return userId ? `prefs_${userId}` : "prefs_guest";
+    }
+
     function getLS(key, fallback) {
         try {
             const v = JSON.parse(localStorage.getItem(key));
@@ -37,14 +59,14 @@
         localStorage.setItem(key, JSON.stringify(value));
     }
 
-    // --- Bag count ---
-    function updateBagCount() {
-        const cart = getLS("cart", []);
-        const count = cart.reduce((sum, item) => sum + (Number(item.qty) || 0), 0);
-        bagCountEl.textContent = `(${count})`;
+    function showToast(el) {
+        if (!el) return;
+        el.classList.remove("d-none");
+        clearTimeout(el._t);
+        el._t = setTimeout(() => el.classList.add("d-none"), 1800);
     }
 
-    // --- Validation ---
+    // ---------- validation ----------
     function isValidEmail(email) {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
         return re.test(String(email).trim());
@@ -52,7 +74,7 @@
 
     function setInvalid(input, errorEl, message) {
         input.classList.add("is-invalid");
-        if (message) errorEl.textContent = message;
+        if (message && errorEl) errorEl.textContent = message;
     }
 
     function setValid(input) {
@@ -71,163 +93,133 @@
 
     function validateEmail() {
         const v = emailInput.value.trim();
-        if (!v) {
-            setInvalid(emailInput, emailError, "Email is required.");
-            return false;
-        }
-        if (!isValidEmail(v)) {
-            setInvalid(emailInput, emailError, "Please enter a valid email.");
+        if (!v || !isValidEmail(v)) {
+            setInvalid(emailInput, emailError, "Email is invalid.");
             return false;
         }
         setValid(emailInput);
         return true;
     }
 
-    function showToast(el) {
-        el.classList.remove("d-none");
-        clearTimeout(el._t);
-        el._t = setTimeout(() => el.classList.add("d-none"), 1800);
-    }
-
-    // --- Auth / Profile ---
+    // ---------- load profile ----------
     function loadProfile() {
-        const currentUser = getLS("currentUser", null);
+        const user = getSupabaseUserSafe();
 
-        if (!currentUser) {
+        if (!user) {
             welcomeMeta.textContent = "Not signed in";
             notLoggedIn.classList.remove("d-none");
             profileForm.classList.add("d-none");
             return;
         }
 
-        // Support both {fullName,email} and {id,fullName,email}
-        const name = currentUser.fullName || currentUser.name || "";
-        const email = currentUser.email || "";
-
-        welcomeMeta.textContent = `Signed in as ${email || "user"}`;
-
         notLoggedIn.classList.add("d-none");
         profileForm.classList.remove("d-none");
 
+        const name =
+            user?.user_metadata?.name ||
+            user?.user_metadata?.fullName ||
+            user?.user_metadata?.display_name ||
+            "";
+
+        const email = user?.email || "";
+
+        welcomeMeta.textContent = `Signed in as ${email || "user"}`;
+
         fullNameInput.value = name;
         emailInput.value = email;
+        emailInput.readOnly = true; // Supabase email update needs extra API; keep it locked for now.
 
-        // Preferences stored in currentUser.preferences
-        const prefs = currentUser.preferences || {};
+        // Preferences (localStorage per user)
+        const prefs = getLS(prefsKey(user.id), { emails: false, offers: false });
         prefEmails.checked = !!prefs.emails;
         prefOffers.checked = !!prefs.offers;
     }
 
-    function saveProfileChanges() {
-        const ok = validateName() && validateEmail();
-        if (!ok) return;
-
-        const users = getLS("users", []);
-        const currentUser = getLS("currentUser", null);
-        if (!currentUser) return;
-
-        const updated = {
-            ...currentUser,
-            fullName: fullNameInput.value.trim(),
-            email: emailInput.value.trim().toLowerCase()
-        };
-
-        // If you store users array, update matching user record by id OR email
-        const newUsers = users.map(u => {
-            const sameId = updated.id && u.id && u.id === updated.id;
-            const sameEmail = (u.email || "").toLowerCase() === (currentUser.email || "").toLowerCase();
-            return (sameId || sameEmail) ? { ...u, ...updated } : u;
-        });
-
-        setLS("users", newUsers);
-        setLS("currentUser", updated);
-
-        welcomeMeta.textContent = `Signed in as ${updated.email}`;
-        showToast(saveToast);
-    }
-
-    function logout() {
-        localStorage.removeItem("currentUser");
-        window.location.href = "./login.html";
-    }
-
-    // --- Orders ---
-    function renderOrders() {
-        const currentUser = getLS("currentUser", null);
-        const orders = getLS("orders", []);
-
-        // Filter orders for current user if email exists, else show none
-        const myOrders = currentUser?.email
-            ? orders.filter(o => (o.user?.email || o.email || "").toLowerCase() === currentUser.email.toLowerCase())
-            : [];
-
-        ordersCount.textContent = `${myOrders.length} ${myOrders.length === 1 ? "order" : "orders"}`;
-
-        if (!myOrders.length) {
-            ordersEmpty.classList.remove("d-none");
-            ordersList.innerHTML = "";
-            return;
-        }
-
-        ordersEmpty.classList.add("d-none");
-
-        // newest first
-        myOrders.sort((a, b) => new Date(b.createdAt || b.date || 0) - new Date(a.createdAt || a.date || 0));
-
-        ordersList.innerHTML = myOrders.map(order => {
-            const id = order.orderId || order.id || "—";
-            const date = order.createdAt || order.date || "";
-            const niceDate = date ? new Date(date).toLocaleString() : "—";
-            const total = typeof order.total === "number" ? order.total : Number(order.total || 0);
-
-            const items = Array.isArray(order.items) ? order.items : [];
-            const itemsText = items.length
-                ? items.slice(0, 3).map(i => `${i.title || "Item"} × ${i.qty || 1}`).join(" • ")
-                : "No items saved";
-
-            return `
-        <div class="z-order">
-          <div class="z-order-top">
-            <div>
-              <div class="z-order-id">ORDER ${String(id).toUpperCase()}</div>
-              <div class="z-order-date">${niceDate}</div>
-            </div>
-            <div class="z-order-id">${total.toFixed(2)}$</div>
-          </div>
-          <p class="z-order-items">${itemsText}${items.length > 3 ? " …" : ""}</p>
-        </div>
-      `;
-        }).join("");
-    }
-
+    // ---------- save preferences ----------
     function savePreferences() {
-        const currentUser = getLS("currentUser", null);
-        if (!currentUser) return;
+        const user = getSupabaseUserSafe();
+        if (!user) return;
 
-        const updated = {
-            ...currentUser,
-            preferences: {
-                ...(currentUser.preferences || {}),
-                emails: prefEmails.checked,
-                offers: prefOffers.checked
-            }
+        const prefs = {
+            emails: prefEmails.checked,
+            offers: prefOffers.checked,
         };
 
-        // Keep users array in sync too
-        const users = getLS("users", []);
-        const newUsers = users.map(u => {
-            const sameId = updated.id && u.id && u.id === updated.id;
-            const sameEmail = (u.email || "").toLowerCase() === (currentUser.email || "").toLowerCase();
-            return (sameId || sameEmail) ? { ...u, ...updated } : u;
-        });
-
-        setLS("users", newUsers);
-        setLS("currentUser", updated);
-
+        setLS(prefsKey(user.id), prefs);
         showToast(prefsToast);
     }
 
-    // Events
+    // ---------- save profile name (local + optional server) ----------
+    async function saveProfileChanges() {
+        const user = getSupabaseUserSafe();
+        if (!user) return;
+
+        const ok = validateName() && validateEmail();
+        if (!ok) return;
+
+        const newName = fullNameInput.value.trim();
+
+        // Update locally so navbar/profile reflect immediately
+        // sb_user might exist OR session.user only
+        try {
+            const sbUserRaw = localStorage.getItem("sb_user");
+            if (sbUserRaw) {
+                const sbUser = JSON.parse(sbUserRaw);
+                sbUser.user_metadata = sbUser.user_metadata || {};
+                sbUser.user_metadata.name = newName;
+                localStorage.setItem("sb_user", JSON.stringify(sbUser));
+            }
+
+            const sessionRaw = localStorage.getItem("sb_session");
+            if (sessionRaw) {
+                const s = JSON.parse(sessionRaw);
+                if (s?.user) {
+                    s.user.user_metadata = s.user.user_metadata || {};
+                    s.user.user_metadata.name = newName;
+                    localStorage.setItem("sb_session", JSON.stringify(s));
+                }
+            }
+        } catch { }
+
+        // OPTIONAL: Update Supabase user metadata via Auth API (requires access token)
+        // If you don't want server update, you can delete this block.
+        try {
+            const token = (typeof getAccessToken === "function") ? getAccessToken() : null;
+            if (token) {
+                const SUPABASE_AUTH_URL = "https://ajuxbtifwipqmwmsrqcg.supabase.co/auth/v1/user";
+                await fetch(SUPABASE_AUTH_URL, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        apikey: API_KEY,                 // from components.js global
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        data: { name: newName },
+                    }),
+                });
+            }
+        } catch {
+            // ignore (still updated locally)
+        }
+
+        // Re-render navbar auth slot if available
+        if (typeof renderNavAuth === "function") renderNavAuth();
+
+        showToast(saveToast);
+    }
+
+    // ---------- orders (UI only unless you have a table) ----------
+    function renderOrders() {
+        // If you later create orders table:
+        // - fetch orders by user.id
+        // - populate ordersList
+        ordersCount.textContent = "0 orders";
+        ordersEmpty.classList.remove("d-none");
+        ordersList.innerHTML = "";
+    }
+
+    // ---------- events ----------
     if (profileForm) {
         fullNameInput.addEventListener("input", validateName);
         emailInput.addEventListener("input", validateEmail);
@@ -238,11 +230,24 @@
         });
     }
 
-    if (logoutBtn) logoutBtn.addEventListener("click", logout);
+    if (logoutBtn) logoutBtn.addEventListener("click", () => {
+        // use your global logout if exists (components.js)
+        if (typeof logout === "function") return logout();
+
+        // fallback
+        localStorage.removeItem("sb_session");
+        localStorage.removeItem("sb_user");
+        window.location.href = "../index/index.html";
+    });
+
     if (savePrefsBtn) savePrefsBtn.addEventListener("click", savePreferences);
 
-    // Init
-    updateBagCount();
-    loadProfile();
-    renderOrders();
+    // ---------- init (after components.js is loaded) ----------
+    document.addEventListener("DOMContentLoaded", async () => {
+        // Bag count comes from DB cart_items (components.js)
+        if (typeof updateBagCount === "function") await updateBagCount();
+
+        loadProfile();
+        renderOrders();
+    });
 })();

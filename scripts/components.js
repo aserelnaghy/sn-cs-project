@@ -1,130 +1,193 @@
-async function loadComponent(id, file) {
-    try {
-        const res = await fetch(file);
-        const html = await res.text();
-        document.getElementById(id).innerHTML = html;
-    } catch (err) {
-        console.error("Component load error:", err);
-    }
-}
+(() => {
+    const API_KEY = "sb_publishable_vzpgbW6T18bn5RyHdx66qw_pdeMQswL";
+    const SUPABASE_URL = "https://ajuxbtifwipqmwmsrqcg.supabase.co/rest/v1";
 
-document.addEventListener("DOMContentLoaded", async () => {
-    await loadComponent("navbar", "/components/navbar.html");
-    await loadComponent("footer", "/components/footer.html");
 
-    updateBagCount();
-    renderNavAuth();
-});
-
-function getSupabaseUser() {
-    const rawUser = localStorage.getItem("sb_user");
-    if (rawUser) {
-        try { return JSON.parse(rawUser); } catch { }
-    }
-
-    const rawSession = localStorage.getItem("sb_session");
-    if (rawSession) {
+    async function loadComponent(id, file) {
         try {
-            const s = JSON.parse(rawSession);
-            return s?.user || null;
-        } catch { }
+            const res = await fetch(file);
+            const html = await res.text();
+            document.getElementById(id).innerHTML = html;
+        } catch (err) {
+            console.error("Component load error:", err);
+        }
     }
 
-    return null;
-}
+    document.addEventListener("DOMContentLoaded", async () => {
+        await loadComponent("navbar", "/components/navbar.html");
+        await loadComponent("footer", "/components/footer.html");
 
+        renderNavAuth();
+        await updateBagCount();
+    });
 
-function getSupabaseUser() {
-    // Preferred: sb_user
-    const sbUserRaw = localStorage.getItem("sb_user");
-    if (sbUserRaw) {
-        try { return JSON.parse(sbUserRaw); } catch { }
+    function getSupabaseUser() {
+        const rawUser = localStorage.getItem("sb_user");
+        if (rawUser) {
+            try { return JSON.parse(rawUser); } catch { }
+        }
+
+        const rawSession = localStorage.getItem("sb_session");
+        if (rawSession) {
+            try {
+                const s = JSON.parse(rawSession);
+                return s?.user || null;
+            } catch { }
+        }
+
+        return null;
     }
 
-    // Fallback: session.user
-    const sessionRaw = localStorage.getItem("sb_session");
-    if (sessionRaw) {
-        try {
-            const s = JSON.parse(sessionRaw);
-            return s?.user || null;
-        } catch { }
-    }
 
-    // Compatibility fallback if you kept it
-    const currentRaw = localStorage.getItem("currentUser");
-    if (currentRaw) {
-        try { return JSON.parse(currentRaw); } catch { }
-    }
+    // function getSupabaseUser() {
+    //     // Preferred: sb_user
+    //     const sbUserRaw = localStorage.getItem("sb_user");
+    //     if (sbUserRaw) {
+    //         try { return JSON.parse(sbUserRaw); } catch { }
+    //     }
 
-    return null;
-}
+    //     // Fallback: session.user
+    //     const sessionRaw = localStorage.getItem("sb_session");
+    //     if (sessionRaw) {
+    //         try {
+    //             const s = JSON.parse(sessionRaw);
+    //             return s?.user || null;
+    //         } catch { }
+    //     }
+
+    //     // Compatibility fallback if you kept it
+    //     const currentRaw = localStorage.getItem("currentUser");
+    //     if (currentRaw) {
+    //         try { return JSON.parse(currentRaw); } catch { }
+    //     }
+
+    //     return null;
+    // }
 
 
-function renderNavAuth() {
-    const slot = document.getElementById("navUserSlot");
-    if (!slot) return;
+    function renderNavAuth() {
+        const slot = document.getElementById("navUserSlot");
+        if (!slot) return;
 
-    const user = getSupabaseUser();
+        const user = getSupabaseUser();
 
-    if (!user) {
-        // NOT LOGGED IN: show icon + "Sign in"
-        slot.innerHTML = `
-      <a href="../Login/login.html" class="z-icon-btn d-flex align-items-center gap-2" aria-label="Sign in">
+        // NOT LOGGED IN
+        if (!user) {
+            slot.innerHTML = `
+      <a href="../Login/login.html"
+         class="nav-auth-btn"
+         aria-label="Sign in">
         <i class="bi bi-person-circle"></i>
-        <span class="d-none d-md-inline">Sign in</span>
+        <span class="nav-auth-text">Sign in</span>
       </a>
     `;
-        return;
-    }
+            return;
+        }
 
-    // LOGGED IN: show "Sign out" text (no icon if you prefer)
-    slot.innerHTML = `
-    <button type="button"
-      class="btn btn-link p-0 text-decoration-none d-flex align-items-center gap-2 z-signout"
-      id="navSignOutBtn" aria-label="Sign out">
-      <span class="d-none d-md-inline">Sign out</span>
-    </button>
+        // LOGGED IN (Dropdown)
+        slot.innerHTML = `
+    <div class="dropdown">
+      <button class="nav-auth-btn dropdown-toggle"
+              type="button"
+              id="navProfileDropdown"
+              data-bs-toggle="dropdown"
+              aria-expanded="false">
+        <i class="bi bi-person-circle"></i>
+        <span class="nav-auth-text">Profile</span>
+      </button>
+
+      <ul class="dropdown-menu dropdown-menu-end z-auth-menu"
+          aria-labelledby="navProfileDropdown">
+        <li>
+          <a class="dropdown-item" href="../Profile/profile.html">
+            <i class="bi bi-person me-2"></i> Profile
+          </a>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <button class="dropdown-item z-auth-logout" type="button" id="navLogoutBtn">
+            <i class="bi bi-box-arrow-right me-2"></i> Sign out
+          </button>
+        </li>
+      </ul>
+    </div>
   `;
 
-    const btn = document.getElementById("navSignOutBtn");
-    if (btn) btn.addEventListener("click", logout);
-}
+        document.getElementById("navLogoutBtn")?.addEventListener("click", logout);
+    }
 
-function shortName(name) {
-    // keeps navbar tidy
-    const s = String(name).trim();
-    if (s.length <= 16) return s;
-    return s.slice(0, 16) + "…";
-}
+    function shortName(name) {
+        // keeps navbar tidy
+        const s = String(name).trim();
+        if (s.length <= 16) return s;
+        return s.slice(0, 16) + "…";
+    }
 
-function escapeHtml(str) {
-    return String(str)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-}
+    function escapeHtml(str) {
+        return String(str)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
 
-function logout() {
-    localStorage.removeItem("sb_session");
-    localStorage.removeItem("sb_user");
+    function logout() {
+        localStorage.removeItem("sb_session");
+        localStorage.removeItem("sb_user");
 
-    window.location.href = "../Login/login.html";
-}
+        window.location.href = "/pages/index/index.html";
+    }
 
-function cartKey() {
-    const u = getSupabaseUser();
-    return u?.id ? `cart_${u.id}` : "cart_guest";
-}
+    function cartKey() {
+        const u = getSupabaseUser();
+        return u?.id ? `cart_${u.id}` : "cart_guest";
+    }
 
-function getCart() {
-    return JSON.parse(localStorage.getItem(cartKey())) || [];
-}
+    function getCart() {
+        return JSON.parse(localStorage.getItem(cartKey())) || [];
+    }
 
-function updateBagCount() {
-    const cart = getCart();
-    const count = cart.reduce((sum, item) => sum + (Number(item.qty) || 0), 0);
-    const el = document.getElementById("bagCount");
-    if (el) el.textContent = String(count);
-}
+    function getAccessToken() {
+        try {
+            const session = JSON.parse(localStorage.getItem("sb_session"));
+            return session?.access_token || null;
+        } catch {
+            return null;
+        }
+    }
+
+    async function updateBagCount() {
+        const el = document.getElementById("nav-bag-count");
+        if (!el) return;
+
+        const token = getAccessToken();
+        if (!token) {
+            el.textContent = "";
+            return;
+        }
+
+        try {
+            const res = await fetch(`${SUPABASE_URL}/cart_items?select=quantity`, {
+                headers: {
+                    apikey: API_KEY,
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!res.ok) {
+                el.textContent = "";
+                return;
+            }
+
+            const items = await res.json();
+            const total = Array.isArray(items)
+                ? items.reduce((sum, i) => sum + (Number(i.quantity) || 0), 0)
+                : 0;
+
+            el.textContent = total > 0 ? ` (${total})` : "";
+        } catch {
+            el.textContent = "";
+        }
+    }
+})();
